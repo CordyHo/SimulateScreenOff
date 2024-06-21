@@ -1,7 +1,6 @@
 package com.cordy.simulatescreenoff
 
 import android.os.Bundle
-import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
@@ -15,49 +14,52 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.cordy.simulatescreenoff.ui.theme.SimulateScreenOffTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+
+        // compose的方法
         enableEdgeToEdge()
+
+        // 隐藏状态栏和导航栏
+        WindowInsetsControllerCompat(window, window.decorView).hide(WindowInsetsCompat.Type.systemBars())
+        window.insetsController?.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+
+        // 内容覆盖到刘海区域
         val params = window.attributes
         params.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
         window.attributes = params
 
-        //隐藏SystemBar，适配Android 11
-        window.setDecorFitsSystemWindows(false)
-        window.insetsController?.hide(WindowInsets.Type.systemBars())
-        window.insetsController?.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-
+        //不息屏
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        super.onCreate(savedInstanceState)
         setContent {
-            SimulateScreenOffTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Text(
-                        "", modifier = Modifier
-                            .background(Color.Black)
-                            .fillMaxSize()
-                    )
-                }
-            }
+            MainContent()
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!", modifier = modifier
-    )
+fun MainContent() {
+    SimulateScreenOffTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Text(
+                "", modifier = Modifier
+                    .background(Color.Black)
+                    .fillMaxSize()
+            )
+        }
+    }
 }
 
-@Preview(showBackground = true)
 @Composable
+@Preview(showBackground = true)
 fun GreetingPreview() {
-    SimulateScreenOffTheme {
-        Greeting("Android")
-    }
+    MainContent()
 }
